@@ -1,0 +1,142 @@
+body {
+    display: flex;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    background-color: #fff;
+}
+
+aside {
+    background-color: #f0f0f0;
+    padding: 20px;
+    width: 200px;
+    min-height: 100vh;
+}
+
+aside h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    font-size: 18px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+nav ul li.active {
+    font-weight: bold;
+}
+
+#content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#uploadDataButton, #profilePicture {
+    background-color: #ddd;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#profilePicture {
+    width: 50px;
+    height: 50px;
+    background-image: url('profile-picture.png');
+    background-size: cover;
+    border-radius: 50%;
+}
+
+#profitLoss {
+    margin-bottom: 20px;
+}
+
+#graphContainer, .infoContent {
+    background-color: #ddd;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#timeFilters {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#timeFilters span {
+    padding: 5px 10px;
+    margin: 0 5px;
+    background-color: #eee;
+    cursor: pointer;
+}
+
+.infoSection {
+    display: inline-block;
+    vertical-align: top;
+    width: calc(33.333% - 20px);
+    box-sizing: border-box;
+    margin-right: 10px;
+    background-color: #ddd;
+    padding: 20px;
+    text-align: center;
+}
+
+.infoSection:last-child {
+    margin-right: 0;
+}
+
+.infoContent {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    height: 100px; /* Adjust as needed */
+    margin-top: 10px;
+}
+
+
+/* Styles for the insights section */
+#insightsSection .infoSection {
+    display: inline-block;
+    vertical-align: top;
+    width: calc(33.333% - 20px);
+    margin-right: 10px;
+    box-sizing: border-box;
+}
+
+#insightsSection .infoSection.full {
+    width: calc(100% - 20px);
+    margin-right: 0;
+}
+
+#insightsSection .infoSection .infoContent {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    height: 150px; /* Or use 'min-height' for variable content height */
+    margin-top: 10px;
+}
+
+/* Clearfix for .infoSection elements */
+#insightsSection:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* ... Additional CSS if needed ... */
