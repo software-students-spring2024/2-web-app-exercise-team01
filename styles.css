@@ -60,6 +60,7 @@ header {
     background-image: url('profile-picture.png');
     background-size: cover;
     border-radius: 50%;
+    padding: 10px;
 }
 
 #profitLoss {
@@ -140,3 +141,10 @@ header {
 }
 
 /* ... Additional CSS if needed ... */
+#insightsSection {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    row-gap: 4vh;
+}
