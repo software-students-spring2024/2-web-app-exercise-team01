@@ -1,9 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     const navList = document.getElementById('navList');
     const content = document.getElementById('content');
-
     // Initialize the page with the 'upload' content
     loadContent('upload');
+
+    const uploadButton = document.getElementById('uploadDataButton');
+
+    uploadButton.addEventListener('click', function() {
+        document.getElementById('uploadInput').click();
+    });
 
     navList.addEventListener('click', (event) => {
         let target = event.target;
@@ -28,6 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <header>
                     <h2>Upload</h2>
                     <button id="uploadDataButton">Upload Data</button>
+                    <input type="file" id="uploadInput" accept=".csv" style="display: none"
+                        onchange="document.getElementById('uploadSection').innerHTML = 'File uploaded: ' + this.files[0].name"
+                    />
                     <div id="profilePicture"></div>
                 </header>
                 <div id="uploadSection">
