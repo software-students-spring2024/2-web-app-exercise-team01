@@ -4,15 +4,15 @@ A little exercise to build a web application following an agile development proc
 
 ## Product vision statement
 
-See instructions. Delete this line and place the Product Vision Statement here.
+A user-friendly app that helps crypto traders easily manage their account, profits and losses, get ready for taxes, and receive key financial metrics.
 
 ## User stories
 
-See instructions. Delete this line and place a link to the user stories here.
+https://github.com/software-students-spring2024/2-web-app-exercise-team01/issues
 
 ## Task boards
 
-See instructions. Delete this line and place a link to the task boards here.
+https://github.com/orgs/software-students-spring2024/projects/23/views/1
 
 ## Webapp demo link (Aarav)
 Click the link below to see a live demo of the current version of our web app.
