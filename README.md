@@ -12,7 +12,7 @@ https://github.com/software-students-spring2024/2-web-app-exercise-team01/issues
 
 ## Task boards
 
-https://github.com/orgs/software-students-spring2024/projects/23/views/1
+https://github.com/software-students-spring2024/2-web-app-exercise-team01/projects?query=is%3Aopen
 
 ## Webapp demo link (Aarav)
 Click the link below to see a live demo of the current version of our web app.
