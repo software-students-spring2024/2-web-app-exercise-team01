@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<header>
+    <h2>Upload</h2>
+    <button id="uploadDataButton">Upload Data</button>
+    <input type="file" id="uploadInput" accept=".csv" style="display: none"
+        onchange="document.getElementById('uploadSection').innerHTML = 'File uploaded: ' + this.files[0].name"
+    />
+    <div id="profilePicture"></div>
+</header>
+<div id="uploadSection">
+    <p>Click here to upload a CSV of your trades (opens finder)</p>
+</div>
+{% endblock content %}
