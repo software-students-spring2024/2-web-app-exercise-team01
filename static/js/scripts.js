@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Iterate over each list item and add mouseover and mouseout event listeners
     document.querySelectorAll('#navList li').forEach(li => {
         li.addEventListener('mouseover', function () {
             this.classList.add('hover');
