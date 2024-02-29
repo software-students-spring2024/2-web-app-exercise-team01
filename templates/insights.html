@@ -1,0 +1,42 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<header>
+    <h2>Insights</h2>
+    <button id="uploadDataButton">Upload Data</button>
+    <div id="profilePicture"></div>
+</header>
+<div id="insightsSection">
+    <div class="infoSection">
+        <h4>P&L By Token</h4>
+        <div class="infoContent">
+            <p>Trade details</p>
+        </div>
+    </div>
+    <div class="infoSection">
+        <h4>P&L - Longs</h4>
+        <div class="infoContent">
+            <p>Long trade details</p>
+        </div>
+    </div>
+    <div class="infoSection">
+        <h4>P&L - Shorts</h4>
+        <div class="infoContent">
+            <p>Short trade details</p>
+        </div>
+    </div>
+    <div class="infoSection">
+        <h4>P&L By Holding Period</h4>
+        <div class="infoContent">
+            <p>Trade details</p>
+        </div>
+    </div>
+    <div class="infoSection full">
+        <h4>More trade statistics</h4>
+        <div class="infoContent">
+            <p>Trade details</p>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
