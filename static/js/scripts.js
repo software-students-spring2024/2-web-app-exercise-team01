@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const uploadButton = document.getElementById('uploadDataButton');
 
-    uploadButton.addEventListener('click', function() {
+    uploadButton.addEventListener('click', function () {
         document.getElementById('uploadInput').click();
     });
 
@@ -19,6 +19,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Iterate over each list item and add mouseover and mouseout event listeners
+    document.querySelectorAll('#navList li').forEach(li => {
+        li.addEventListener('mouseover', function () {
+            this.classList.add('hover');
+        });
+
+        li.addEventListener('mouseout', function () {
+            this.classList.remove('hover');
+        });
+    });
+
     function setActiveTab(targetId) {
         document.querySelectorAll('#navList li').forEach(li => {
             li.classList.remove('active');
@@ -27,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadContent(targetId) {
-        // Define content for each tab
         const tabContent = {
             'upload': `
                 <header>
@@ -55,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div id="graphContainer">
                         <p>Graph image placeholder</p>
-                        <!-- Placeholder for graph image. Replace with actual image or graph drawing logic -->
                     </div>
                     <div id="timeFilters">
                         <span>1D</span>
@@ -70,99 +79,96 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h4>Current Positions &gt;</h4>
                         <div class="infoContent">
                             <p>Portfolio details placeholder</p>
-                            <!-- Placeholder for portfolio details. Replace with actual content -->
                         </div>
                     </div>
                     <div class="infoSection">
                         <h4>Orders &gt;</h4>
                         <div class="infoContent">
                             <p>Order details placeholder</p>
-                            <!-- Placeholder for order details. Replace with actual content -->
                         </div>
                     </div>
                 </div>
             `,
             'taxes': `
             <header>
-            <h2>Taxes</h2>
-            <button id="uploadDataButton">Upload Data</button>
-            <div id="profilePicture"></div>
-        </header>
-        <div id="taxesSection">
-            <div id="profitLoss">
-                <h3>P/L: $1000</h3>
-                <p>+ $30 (3.09%)</p>
-            </div>
-            <div id="graphContainer">
-                <p>graph image</p>
-            </div>
-            <div id="timeFilters">
-                <span>1D</span>
-                <span>1W</span>
-                <span>1M</span>
-                <span>3M</span>
-                <span>YTD</span>
-                <span>1Y</span>
-                <span>ALL</span>
-            </div>
-            <div class="infoSection">
-                <h4>P&L By Token</h4>
-                <div class="infoContent">
-                    <p>Portfolio details</p>
+                <h2>Taxes</h2>
+                <button id="uploadDataButton">Upload Data</button>
+                <div id="profilePicture"></div>
+            </header>
+            <div id="taxesSection">
+                <div id="profitLoss">
+                    <h3>P/L: $1000</h3>
+                    <p>+ $30 (3.09%)</p>
                 </div>
-            </div>
-            <div class="infoSection">
-                <h4>Cost basis per token</h4>
-                <div class="infoContent">
-                    <p>Token details</p>
+                <div id="graphContainer">
+                    <p>graph image</p>
                 </div>
-            </div>
-            <div class="infoSection">
-                <h4>Proceeds per token</h4>
-                <div class="infoContent">
-                    <p>Token details</p>
+                <div id="timeFilters">
+                    <span>1D</span>
+                    <span>1W</span>
+                    <span>1M</span>
+                    <span>3M</span>
+                    <span>YTD</span>
+                    <span>1Y</span>
+                    <span>ALL</span>
                 </div>
-            </div>
-        </div>            `,
+                <div class="infoSection">
+                    <h4>P&L By Token</h4>
+                    <div class="infoContent">
+                        <p>Portfolio details</p>
+                    </div>
+                </div>
+                <div class="infoSection">
+                    <h4>Cost basis per token</h4>
+                    <div class="infoContent">
+                        <p>Token details</p>
+                    </div>
+                </div>
+                <div class="infoSection">
+                    <h4>Proceeds per token</h4>
+                    <div class="infoContent">
+                        <p>Token details</p>
+                    </div>
+                </div>
+            </div>`,
             'insights': `
             <header>
-            <h2>Insights</h2>
-            <button id="uploadDataButton">Upload Data</button>
-            <div id="profilePicture"></div>
-        </header>
-        <div id="insightsSection">
-            <div class="infoSection">
-                <h4>P&L By Token</h4>
-                <div class="infoContent">
-                    <p>Trade details</p>
+                <h2>Insights</h2>
+                <button id="uploadDataButton">Upload Data</button>
+                <div id="profilePicture"></div>
+            </header>
+            <div id="insightsSection">
+                <div class="infoSection">
+                    <h4>P&L By Token</h4>
+                    <div class="infoContent">
+                        <p>Trade details</p>
+                    </div>
                 </div>
-            </div>
-            <div class="infoSection">
-                <h4>P&L - Longs</h4>
-                <div class="infoContent">
-                    <p>Long trade details</p>
+                <div class="infoSection">
+                    <h4>P&L - Longs</h4>
+                    <div class="infoContent">
+                        <p>Long trade details</p>
+                    </div>
                 </div>
-            </div>
-            <div class="infoSection">
-                <h4>P&L - Shorts</h4>
-                <div class="infoContent">
-                    <p>Short trade details</p>
+                <div class="infoSection">
+                    <h4>P&L - Shorts</h4>
+                    <div class="infoContent">
+                        <p>Short trade details</p>
+                    </div>
                 </div>
-            </div>
-            <div class="infoSection">
-                <h4>P&L By Holding Period</h4>
-                <div class="infoContent">
-                    <p>Trade details</p>
+                <div class="infoSection">
+                    <h4>P&L By Holding Period</h4>
+                    <div class="infoContent">
+                        <p>Trade details</p>
+                    </div>
                 </div>
-            </div>
-            <div class="infoSection full">
-                <h4>More trade statistics</h4>
-                <div class="infoContent">
-                    <p>Trade details</p>
+                <div class="infoSection full">
+                    <h4>More trade statistics</h4>
+                    <div class="infoContent">
+                        <p>Trade details</p>
+                    </div>
                 </div>
-            </div>
-        </div>
-            `
+            </div>`
         };
 
         // Load the content into the 'content' section
