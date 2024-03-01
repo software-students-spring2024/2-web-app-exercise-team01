@@ -3,7 +3,9 @@
 {% block content %}
 <header>
     <h2>Upload</h2>
-    <button id="uploadDataButton">Upload Data</button>
+    <a href="/upload">
+        <button id="uploadDataButton">Upload Data</button>
+    </a>
     <input type="file" id="uploadInput" accept=".csv" style="display: none"
         onchange="document.getElementById('uploadSection').innerHTML = 'File uploaded: ' + this.files[0].name"
     />
