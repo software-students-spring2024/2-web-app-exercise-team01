@@ -11,11 +11,12 @@
     <aside>
         <h1>crypto pal</h1>
         <nav>
+            {% set active_page = request.path %}
             <ul id="navList">
-                <li data-target="upload" class="active"><a href="upload">Upload</a></li>
-                <li data-target="dashboard"><a href="dashboard">Dashboard</a></li>
-                <li data-target="taxes"><a href="taxes">Taxes</a></li>
-                <li data-target="insights"><a href="insights">Insights</a></li>
+                <li data-target="upload" class="{{ 'active' if active_page == '/upload' else '' }}"><a href="/upload">Upload</a></li>
+                <li data-target="dashboard" class="{{ 'active' if active_page == '/dashboard' else '' }}"><a href="/dashboard">Dashboard</a></li>
+                <li data-target="taxes" class="{{ 'active' if active_page == '/taxes' else '' }}"><a href="/taxes">Taxes</a></li>
+                <li data-target="insights" class="{{ 'active' if active_page == '/insights' else '' }}"><a href="/insights">Insights</a></li>
             </ul>
         </nav>
     </aside>

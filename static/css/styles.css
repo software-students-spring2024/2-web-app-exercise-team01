@@ -30,7 +30,7 @@ nav ul li {
     cursor: pointer;
 }
 
-nav ul li.active {
+.active {
     font-weight: bold;
 }
 
