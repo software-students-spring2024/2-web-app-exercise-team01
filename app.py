@@ -37,19 +37,19 @@ def home():
 
 @app.route('/upload')
 def upload():
-    return render_template('upload.html')
+    return render_template('upload.html', section="Upload")
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', section="Dashboard")
 
 @app.route('/taxes')
 def taxes():
-    return render_template('taxes.html')
+    return render_template('taxes.html', section="Taxes")
 
 @app.route('/insights')
 def insights():
-    return render_template('insights.html')
+    return render_template('insights.html', section="Insights")
 
 @app.route('/edit')
 def edit():
