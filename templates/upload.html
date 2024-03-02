@@ -1,10 +1,41 @@
 {% extends 'index.html' %}
 
 {% block content %}
-<div id="uploadSection">
-    <input type="file" id="uploadInput" accept=".csv" style="display: none"
-        onchange="document.getElementById('uploadSection').innerHTML = 'File uploaded: ' + this.files[0].name"
-    />
-    <p>Click here to upload a CSV of your trades (opens finder)</p>
+<div id="uploadSection" style="text-align: center;">
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="file" id="uploadInput" accept=".csv" style="display: none" onchange="handleFileUpload()">
+        <label for="uploadInput" style="cursor: pointer;">
+            <p>Click here to select a CSV of your trades</p>
+        </label>
+    </form>
+    <div id="uploadResult"></div>
 </div>
+
+<script>
+function handleFileUpload() {
+    const input = document.getElementById('uploadInput');
+
+    if (input.files[0]) {
+        const formData = new FormData();
+        formData.append('file', input.files[0]);
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                document.getElementById('uploadResult').innerText = "Uploaded: " + data.filename;
+            } else {
+                document.getElementById('uploadResult').innerText = "Upload failed: " + data.error;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('uploadResult').innerText = "Upload error: " + error;
+        });
+    }
+}
+</script>
 {% endblock content %}

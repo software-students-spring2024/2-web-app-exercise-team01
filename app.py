@@ -1,10 +1,14 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, url_for
 from flask import redirect
+from flask import jsonify
 from flask_pymongo import PyMongo
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import os
 from dotenv import load_dotenv
+import pandas as pd
+from werkzeug.utils import secure_filename
+
 
 load_dotenv()
 
@@ -31,13 +35,48 @@ ISNTEAD OF USING JAVASCRIPT TO INSERT CONTENT
 '''
 
 @app.route('/')
-
 def home():
     return redirect('/dashboard')
 
-@app.route('/upload')
-def upload():
-    return render_template('upload.html', section="Upload")
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in {'csv'}
+
+app.config['UPLOAD_FOLDER'] = 'uploads/'
+
+# Ensure UPLOAD_FOLDER exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return jsonify({"error": "No file part"}), 400
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+
+            # Read the file into a pandas DataFrame
+            df = pd.read_csv(filepath)
+
+            # Here you can process the DataFrame df as needed
+            # For example, printing it to the console or performing operations on it
+            print(df)
+
+            # Optionally, after processing, you might want to store the DataFrame in MongoDB
+            # This step depends on the structure of your DataFrame and the MongoDB collection's schema
+
+            return jsonify({"success": True, "filename": filename}), 200
+        return jsonify({"error": "Invalid file or upload failed"}), 400
+    else:
+        # GET request - render the upload page
+        return render_template('upload.html', section="Upload")
+
+
 
 @app.route('/dashboard')
 def dashboard():
@@ -62,3 +101,11 @@ def delete():
 
 if __name__ == '__main__':
     app.run(debug=True, port=3000)
+
+
+
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
