@@ -22,6 +22,10 @@ uri = f"mongodb+srv://{DB_USER}:{DB_PW}@sweproject2.v6vtrh6.mongodb.net/?retryWr
 # Create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi('1'))
 
+init_mongo(client)
+
+app.register_blueprint(auth_bp, url_prefix='/auth')
+
 # Send a ping to confirm a successful connection
 try:
     client.admin.command('ping')
