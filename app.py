@@ -29,6 +29,8 @@ uri = f"mongodb+srv://{DB_USER}:{DB_PW}@sweproject2.v6vtrh6.mongodb.net/?retryWr
 
 # Create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi('1'))
+db = client.sweproject2  # Replace with your actual database name
+trades_collection = db.csv  # Replace with your actual collection name
 
 app.register_blueprint(auth, url_prefix='/auth')
 
@@ -69,18 +71,18 @@ def upload_file():
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
-
-            # Read the file into a pandas DataFrame
             df = pd.read_csv(filepath)
-
-            # Here you can process the DataFrame df as needed
-            # For example, printing it to the console or performing operations on it
-            print(df)
-
-            # Optionally, after processing, you might want to store the DataFrame in MongoDB
-            # This step depends on the structure of your DataFrame and the MongoDB collection's schema
-
-            return jsonify({"success": True, "filename": filename}), 200
+            
+            # Convert DataFrame to dictionary for MongoDB
+            records = df.to_dict(orient='records')
+            
+            # Insert records into MongoDB - trades collection
+            result = trades_collection.insert_many(records)
+            
+            # Cleanup after saving to database
+            os.remove(filepath)
+            
+            return jsonify({"success": True, "filename": filename, "documents_inserted": len(result.inserted_ids)}), 200
         return jsonify({"error": "Invalid file or upload failed"}), 400
     else:
         # GET request - render the upload page
