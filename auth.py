@@ -1,121 +1,85 @@
-from flask import Flask, request, jsonify, render_template, url_for
-from flask import redirect
-from flask import jsonify
-from auth import auth
+# auth.py
+from flask import Blueprint, request, render_template, redirect, url_for, flash
 from extensions import login_manager, bcrypt
-from flask_pymongo import PyMongo
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_bcrypt import Bcrypt
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import os
 from dotenv import load_dotenv
-import pandas as pd
-from werkzeug.utils import secure_filename
+from flask_login import LoginManager
+from flask_bcrypt import Bcrypt
 
 
+# Initialize Blueprint for auth routes
+auth = Blueprint('auth', __name__)
+
+# Setup Flask-Bcrypt for password hashing
+bcrypt = Bcrypt()
+
+# MongoDB setup
 load_dotenv()
-
 DB_USER = os.getenv("DB_USER")
 DB_PW = os.getenv("DB_PW")
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'project'
-
-# Initialize Flask-Login
-login_manager.init_app(app)
-
-bcrypt.init_app(app)
-
 uri = f"mongodb+srv://{DB_USER}:{DB_PW}@sweproject2.v6vtrh6.mongodb.net/?retryWrites=true&w=majority&appName=SWEProject2"
-
-# Create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi('1'))
+db = client.your_database_name  
+users_collection = db.users  
 
-app.register_blueprint(auth, url_prefix='/auth')
+# User class for Flask-Login
+class User(UserMixin):
+    def __init__(self, user_id):
+        self.id = user_id
 
-# Send a ping to confirm a successful connection
-try:
-    client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)
+# Flask-Login user loader
+@login_manager.user_loader
+def load_user(user_id):
+    user = users_collection.find_one({"_id": user_id})
+    if not user:
+        return None
+    return User(user_id)
 
-'''
-CREATE TEMPLATES AND RENDER THEM DEPENDING ON THE ENDPOINT
-ISNTEAD OF USING JAVASCRIPT TO INSERT CONTENT
-'''
-
-@app.route('/')
-def home():
-    return redirect('/dashboard')
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in {'csv'}
-
-app.config['UPLOAD_FOLDER'] = 'uploads/'
-
-# Ensure UPLOAD_FOLDER exists
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
-@app.route('/upload', methods=['GET', 'POST'])
-def upload_file():
+# Registration route
+@auth.route('/register', methods=['GET', 'POST'])
+def register():
     if request.method == 'POST':
-        if 'file' not in request.files:
-            return jsonify({"error": "No file part"}), 400
-        file = request.files['file']
-        if file.filename == '':
-            return jsonify({"error": "No selected file"}), 400
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(filepath)
+        username = request.form.get('username')
+        password = request.form.get('password')
 
-            # Read the file into a pandas DataFrame
-            df = pd.read_csv(filepath)
+        # Check if username already exists
+        user_exists = users_collection.find_one({"username": username})
+        if user_exists:
+            flash('Username already exists')
+            return redirect(url_for('auth.register'))
 
-            # Here you can process the DataFrame df as needed
-            # For example, printing it to the console or performing operations on it
-            print(df)
+        # Hash the password
+        hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
 
-            # Optionally, after processing, you might want to store the DataFrame in MongoDB
-            # This step depends on the structure of your DataFrame and the MongoDB collection's schema
+        # Insert new user into the database
+        users_collection.insert_one({"username": username, "password": hashed_pw})
 
-            return jsonify({"success": True, "filename": filename}), 200
-        return jsonify({"error": "Invalid file or upload failed"}), 400
-    else:
-        # GET request - render the upload page
-        return render_template('upload.html', section="Upload")
+        return redirect(url_for('auth.login'))
+    return render_template('register.html')
 
+# Login route
+@auth.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
 
+        user = users_collection.find_one({"username": username})
+        if user and bcrypt.check_password_hash(user['password'], password):
+            user_obj = User(str(user['_id']))  # Ensure string conversion if using ObjectId
+            login_user(user_obj)
+            return redirect(url_for('main.dashboard'))  # Adjust the redirect as needed
+        else:
+            flash('Invalid login credentials')
+    return render_template('login.html')
 
-@app.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html', section="Dashboard")
-
-@app.route('/taxes')
-def taxes():
-    return render_template('taxes.html', section="Taxes")
-
-@app.route('/insights')
-def insights():
-    return render_template('insights.html', section="Insights")
-
-@app.route('/edit')
-def edit():
-    return render_template('edit.html')
-
-@app.route('/delete')
-def delete():
-    return render_template('delete.html')
-
-
-if __name__ == '__main__':
-    app.run(debug=True, port=3000)
-
-
-
-
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
+# Logout route
+@auth.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('auth.login'))
