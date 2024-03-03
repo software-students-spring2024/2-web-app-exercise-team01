@@ -39,8 +39,8 @@ ISNTEAD OF USING JAVASCRIPT TO INSERT CONTENT
 '''
 
 class User(UserMixin):
-    def __init__(self, email, password):
-        self.email = email
+    def __init__(self, username, password):
+        self.username = username
         self.password = password
 
     def check_password(self, password):
@@ -50,18 +50,24 @@ class User(UserMixin):
 def load_user(user_id):
     user_info = db.users.find_one({"_id": user_id})
     if user_info is not None:
-        return User(email=user_info['email'], password=user_info['password'])
+        return User(username=user_info['username'], password=user_info['password'])
     return None
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    user_info = db.users.find_one({"email": request.form.get('email')})
-    if user_info is not None:
-        user = User(email=user_info['email'], password=user_info['password'])
-        if user and user.check_password(request.form.get('password')):
-            login_user(user)
+    if request.method == 'POST':
+        user_info = db.users.find_one({"username": request.form.get('username')})
+        if user_info is not None:
+            user = User(username=user_info['username'], password=user_info['password'])
+            if user and user.check_password(request.form.get('password')):
+                login_user(user)
+                return redirect('/dashboard')
+        return 'Invalid credentials'
+    else:
+        if current_user.is_authenticated:
             return redirect('/dashboard')
-    return 'Invalid credentials'
+        else:
+            return render_template('login.html')
 
 @app.route('/logout')
 @login_required
@@ -70,9 +76,25 @@ def logout():
     return redirect('/login')
 
 @app.route('/')
-@login_required
 def home():
-    return redirect('/dashboard')
+    if current_user.is_authenticated:
+        return redirect('/dashboard')
+    else:
+        return redirect('/login')
+    
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        hashed_password = generate_password_hash(password)
+        db.users.insert_one({"username": username, "password": hashed_password})
+        return redirect('/login')
+    else:
+        if current_user.is_authenticated:
+            return redirect('/dashboard')
+        else:
+            return render_template('signup.html')
 
 @app.route('/upload')
 @login_required

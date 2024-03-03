@@ -148,3 +148,23 @@ header {
     justify-content: space-between;
     row-gap: 4vh;
 }
+input {
+    border: 2px solid gray;
+    padding: 0.25rem !important;
+    border-radius: 8px;
+}
+#logindiv, #signupdiv {
+    gap: 1vh;
+    align-items: flex-start;
+}
+#loginButton {
+    background-color: blue;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
