@@ -1,7 +1,14 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\.github",
+    "\\.github\\workflows",
+    "\\images",
+    "\\static",
+    "\\static\\css",
+    "\\static\\js",
+    "\\templates"
   ],
-  "SelectedNode": "\\C:\\Users\\kevin\\Source\\Repos\\2-web-app-exercise-team011",
+  "SelectedNode": "\\auth.py",
   "PreviewInSolutionExplorer": false
 }

@@ -1,0 +1,36 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Trades | Crypto Pal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</head>
+<body>
+    <section id="content">
+        <header>
+            <div>
+                <h2 style="margin: 0;">Delete Trades</h2>
+            </div>
+        </header>
+        <div class="delete-forms">
+            <form action="/deleteTrade" method="POST">
+                <label for="tradeId">Trade ID:</label>
+                <input type="text" id="tradeId" name="tradeId" required>
+                <input type="submit" value="Delete Trade">
+            </form>
+            <form action="/deleteAllTrades" method="POST">
+                <input type="submit" value="Delete All Trades" onclick="return confirm('Are you sure you want to delete all trades? This action cannot be undone.');">
+            </form>
+        </div>
+    </section>
+
+</body>
+</html>
+
+{% endblock content %}
