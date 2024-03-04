@@ -8,34 +8,17 @@
     </div> -->
     <div class="flex flex-row justify-between">
         <div class="infoSection">
-            <h4>P&L By Token</h4>
-            <div class="infoContent">
-                <table id="taxesTable">
-                    <tr>
-                        <th>Token</th>
-                        <th>Profit/Loss</th>
-                    </tr>
-                    {% for trade in grouptrades %}
-                    <tr>
-                        <td>{{ trade._id }}</td>
-                        <td>${{ trade.profit }}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </div>
-        </div>
-        <div class="infoSection">
             <h4>Cost basis per token</h4>
             <div class="infoContent">
                 <table id="taxesTable">
                     <tr>
-                        <th>Token</th>
-                        <th>Cost Basis</th>
+                        <th>Symbol</th>
+                        <th>Total Purchase Value</th>
                     </tr>
                     {% for trade in grouptrades %}
                     <tr>
                         <td>{{ trade._id }}</td>
-                        <td>${{ trade.totalSpent }}</td>
+                        <td>{% if trade.costBasis|float < 0 %}-{% endif %}${{ trade.costBasis|replace(",", "")|float|abs }}</td>
                     </tr>
                     {% endfor %}
                 </table>
@@ -46,13 +29,30 @@
             <div class="infoContent">
                 <table id="taxesTable">
                     <tr>
-                        <th>Token</th>
-                        <th>Proceeds</th>
+                        <th>Symbol</th>
+                        <th>Total Sale Value</th>
                     </tr>
                     {% for trade in grouptrades %}
                     <tr>
                         <td>{{ trade._id }}</td>
-                        <td>${{ trade.totalProceeds }}</td>
+                        <td>{% if trade.proceeds|float < 0 %}-{% endif %}${{ trade.proceeds|replace(",", "")|float|abs }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="infoSection">
+            <h4>P&L By Token</h4>
+            <div class="infoContent">
+                <table id="taxesTable">
+                    <tr>
+                        <th>Token</th>
+                        <th>Profit/Loss</th>
+                    </tr>
+                    {% for trade in grouptrades %}
+                    <tr>
+                        <td>{{ trade._id }}</td>
+                        <td>{% if trade.profit|float < 0 %}-{% endif %}${{ trade.profit|replace(",", "")|float|abs }}</td>
                     </tr>
                     {% endfor %}
                 </table>

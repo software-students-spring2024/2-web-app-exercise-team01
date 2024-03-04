@@ -1,29 +1,72 @@
 {% extends 'index.html' %}
 
 {% block content %}
-<div id="insightsSection">
+<div id="taxesSection">
     <div class="infoSection">
-        <h4>P&L By Token</h4>
+        <h4>P&L per Token</h4>
         <div class="infoContent">
-            <p>Trade details</p>
+            <table id="taxesTable">
+                <tr>
+                    <th>Symbol</th>
+                    <th>Profit/Loss</th>
+                </tr>
+                {% for trade in grouptrades %}
+                <tr>
+                    <td>{{ trade._id }}</td>
+                    <td>{% if trade.profit|float < 0 %}-{% endif %}${{ trade.profit|replace(",", "")|float|abs }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <h2>Total P&L: ${{ total_pl }}</h2>
         </div>
     </div>
     <div class="infoSection">
-        <h4>P&L - Longs</h4>
+        <h4>Relative P&L</h4>
         <div class="infoContent">
-            <p>Long trade details</p>
+            <table id="taxesTable">
+                <tr>
+                    <th>Symbol</th>
+                    <th>% Gain/Loss</th>
+                </tr>
+                {% for trade in grouptrades %}
+                <tr>
+                    <td>{{ trade._id }}</td>
+                    <td>{{ trade.relativeProfit }}%</td>
+                </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
     <div class="infoSection">
-        <h4>P&L - Shorts</h4>
+        <h4>Best Performers</h4>
         <div class="infoContent">
-            <p>Short trade details</p>
+            <table id="taxesTable">
+                <tr>
+                    <th>Symbol</th>
+                    <th>% Gain/Loss</th>
+                </tr>
+                {% for trade in best_performers %}
+                <tr>
+                    <td>{{ trade._id }}</td>
+                    <td>{{ trade.relativeProfit }}%</td>
+                </tr>
+                {% endfor %}
+            </table>
         </div>
-    </div>
-    <div class="infoSection">
-        <h4>P&L By Holding Period</h4>
+        <h4>Worst Performers</h4>
         <div class="infoContent">
-            <p>Trade details</p>
+            <table id="taxesTable">
+                <tr>
+                    <th>Symbol</th>
+                    <th>% Gain/Loss</th>
+                </tr>
+                {% for trade in worst_performers %}
+                <tr>
+                    <td>{{ trade._id }}</td>
+                    <td>{{ trade.relativeProfit }}%</td>
+                </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
 </div>
