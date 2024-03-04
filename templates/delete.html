@@ -3,13 +3,27 @@
 <style>
     .centered-text {
         position: relative;
-        top: 20%; /* Adjusts the vertical position */
+        top: 20%;
         text-align: center;
         width: 100%;
     }
 </style>
 
 <div class="centered-text">
-    <h1>Delete rows of or your entire database here</h1>
+    <h1>Delete an individual record or all records from your database</h1>
+    <form action="/delete" method="post">
+        <input type="number" name="visible_id" placeholder="Enter Visible ID to delete" />
+        <input type="submit" name="action" value="Delete Document">
+        <input type="submit" name="action" value="Delete All">
+    </form>
 </div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
 {% endblock content %}
