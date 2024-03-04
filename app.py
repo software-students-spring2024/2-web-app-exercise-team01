@@ -1,10 +1,14 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, url_for
 from flask import redirect
+from flask import jsonify
 from flask_pymongo import PyMongo
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from dotenv import load_dotenv
+import pandas as pd
+from werkzeug.utils import secure_filename
+
 
 load_dotenv()
 
@@ -19,6 +23,7 @@ mongo = PyMongo(app)
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
+trades_collection = mongo.db.csv
 
 '''
 CREATE TEMPLATES AND RENDER THEM DEPENDING ON THE ENDPOINT
@@ -93,25 +98,58 @@ def signup():
         else:
             return render_template('signup.html')
 
-@app.route('/upload')
-@login_required
-def upload():
-    return render_template('upload.html')
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in {'csv'}
+
+app.config['UPLOAD_FOLDER'] = 'uploads/'
+
+# Ensure UPLOAD_FOLDER exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return jsonify({"error": "No file part"}), 400
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            df = pd.read_csv(filepath)
+            
+            # Convert DataFrame to dictionary for MongoDB
+            records = df.to_dict(orient='records')
+            
+            # Insert records into MongoDB - trades collection
+            result = trades_collection.insert_many(records)
+            
+            # Cleanup after saving to database
+            os.remove(filepath)
+            
+            return jsonify({"success": True, "filename": filename, "documents_inserted": len(result.inserted_ids)}), 200
+        return jsonify({"error": "Invalid file or upload failed"}), 400
+    else:
+        # GET request - render the upload page
+        return render_template('upload.html', section="Upload")
 
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', section="Dashboard")
 
 @app.route('/taxes')
 @login_required
 def taxes():
-    return render_template('taxes.html')
+    return render_template('taxes.html', section="Taxes")
 
 @app.route('/insights')
 @login_required
 def insights():
-    return render_template('insights.html')
+    return render_template('insights.html', section="Insights")
 
 @app.route('/edit')
 @login_required
@@ -125,3 +163,11 @@ def delete():
 
 if __name__ == '__main__':
     app.run(debug=True, port=3000)
+
+
+
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

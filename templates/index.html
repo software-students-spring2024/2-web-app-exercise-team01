@@ -6,7 +6,7 @@
     <title>Crypto Pal</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!--<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>-->
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </head>
 <body>
     <aside>
@@ -33,6 +33,24 @@
     </aside>
     
     <section id="content">
+        <header>
+            <div>
+                <h2 style="margin: 0;">{{section}}</h2>
+            </div>
+            <div class="container">
+                <a href="/upload">
+                    <button id="uploadDataButton">Upload Data</button>
+                </a>
+                <div id="profilePicture"></div>
+                <div class="menu-button">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+                
+
+        </header>
         {% block content %}
         {% endblock content %}
     </section>
