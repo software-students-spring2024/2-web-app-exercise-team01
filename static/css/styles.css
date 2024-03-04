@@ -12,6 +12,9 @@ aside {
     padding: 20px;
     width: 200px;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 aside h1 {
