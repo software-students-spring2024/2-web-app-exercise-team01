@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 import pandas as pd
 from werkzeug.utils import secure_filename
 
-
 load_dotenv()
 
 DB_USER = os.getenv("DB_USER")
@@ -24,6 +23,9 @@ mongo = PyMongo(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 trades_collection = mongo.db.csv
+
+# Get all trades from the database
+trades = trades_collection.find()
 
 '''
 CREATE TEMPLATES AND RENDER THEM DEPENDING ON THE ENDPOINT
@@ -50,6 +52,10 @@ def load_user(username):
         return User(username=user_info['username'], password=user_info['password'])
     return None
 
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return redirect('/login')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -57,7 +63,7 @@ def login():
         if user_info is not None:
             user = User(username=user_info['username'], password=user_info['password'])
             if user and user.check_password(request.form.get('password')):
-                login_user(user)
+                login_user(user, remember=True)
                 return redirect('/dashboard')
         return 'Invalid credentials'
     else:
@@ -88,7 +94,7 @@ def signup():
         if existing_user is None:
             hashed_password = generate_password_hash(password)
             mongo.db.users.insert_one({"username": username, "password": hashed_password})
-            login_user(User(username=username, password=password))
+            login_user(User(username=username, password=password), remember=True)
             return redirect('/dashboard')
         else:
             return 'Username already exists'
@@ -139,12 +145,56 @@ def upload_file():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', section="Dashboard")
+    # group trades by token
+    grouptrades = trades_collection.aggregate([
+        {
+            "$group": {
+                "_id": "$Token",
+                "netQuantity": {
+                    "$sum": {
+                        "$cond": [
+                            {"$eq": ["$Transaction", "BUY"]},
+                            "$Quantity",
+                            {"$multiply": ["$Quantity", -1]}
+                        ]
+                    }
+                }
+            }
+        }
+    ])
+
+    grouptrades_list = list(grouptrades)
+
+    print("grouptrades: ", grouptrades_list)
+
+    print("trades: ", trades)
+    return render_template('dashboard.html', section="Dashboard", grouptrades=grouptrades_list)
 
 @app.route('/taxes')
 @login_required
 def taxes():
-    return render_template('taxes.html', section="Taxes")
+    # group trades by token and get profit of each, where profit will have "+" before the number and "-" if it is a loss
+    grouptrades = trades_collection.aggregate([
+        {
+            "$group": {
+                "_id": "$Token",
+                "profit": {
+                    "$sum": {
+                        "$cond": [
+                            {"$eq": ["$Transaction", "SELL"]},
+                            {"$multiply": ["$Quantity", "$Price"]},
+                            {"$multiply": ["$Quantity", -1, "$Price"]}
+                        ]
+                    }
+                }
+            }
+        }
+    ])
+    grouptrades_list = list(grouptrades)
+    for trade in grouptrades_list:
+        trade['profit'] = "{:,.2f}".format(trade['profit'])
+    print("grouptrades: ", grouptrades_list)
+    return render_template('taxes.html', section="Taxes", grouptrades=grouptrades_list)
 
 @app.route('/insights')
 @login_required
@@ -181,16 +231,5 @@ def search_results():
     
     return render_template('search_results.html', results=results)
 
-
-
-
 if __name__ == '__main__':
     app.run(debug=True, port=3000)
-
-
-
-
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

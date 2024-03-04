@@ -110,9 +110,8 @@ header {
 .infoSection {
     display: inline-block;
     vertical-align: top;
-    width: calc(33.333% - 20px);
+    width: 50%;
     box-sizing: border-box;
-    margin-right: 10px;
     background-color: #ddd;
     padding: 20px;
     text-align: center;
@@ -126,8 +125,9 @@ header {
     background-color: #fff;
     border: 1px solid #ccc;
     padding: 10px;
-    height: 100px; /* Adjust as needed */
     margin-top: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
 
@@ -196,4 +196,14 @@ input {
     align-items: center;
     margin-right: 20px;
     gap: 20px; /* Add space between components */
+}
+table, tr {
+    border: 1px solid black;
+}
+th, td {
+    width: 50%;
+    border: 1px solid black;
+}
+#taxesSection .infoSection {
+    width: 32%;
 }
