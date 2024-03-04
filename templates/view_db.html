@@ -1,0 +1,30 @@
+<!-- templates/view_db.html -->
+{% extends 'index.html' %}
+
+{% block content %}
+<div style="text-align: center;">
+    <h2>Database Contents</h2>
+    <table border="1" style="margin-left: auto; margin-right: auto;">
+        <tr>
+            <!-- Add table headers based on your database schema -->
+            <th>Visible ID</th>
+            <th>Token</th>
+            <th>Transaction</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <!-- Add more headers as needed -->
+        </tr>
+        {% for doc in documents %}
+        <tr>
+            <!-- Display each field. Adjust according to your actual document structure. -->
+            <td>{{ doc.get('visible_id', 'N/A') }}</td>
+            <td>{{ doc.get('Token', 'N/A') }}</td>
+            <td>{{ doc.get('Transaction', 'N/A') }}</td>
+            <td>{{ doc.get('Quantity', 'N/A') }}</td>
+            <td>{{ doc.get('Price', 'N/A') }}</td>
+            <!-- Add more fields as needed -->
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock content %}
