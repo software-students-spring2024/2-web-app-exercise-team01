@@ -188,6 +188,7 @@ input {
     border-radius: 8px;
     border: none;
     cursor: pointer;
+}
 
 .container {
     display: flex;
