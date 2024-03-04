@@ -6,6 +6,11 @@ name = "pypi"
 [packages]
 flask = "*"
 pymongo = "*"
+Flask-PyMongo = "*"
+Flask-Login = "*"
+Werkzeug = "*"
+python-dotenv = "*"
+pandas = "*"
 
 [dev-packages]
 

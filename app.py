@@ -11,9 +11,6 @@ from werkzeug.utils import secure_filename
 from flask import flash
 
 
-
-
-
 load_dotenv()
 
 DB_USER = os.getenv("DB_USER")
@@ -163,24 +160,30 @@ def upload_file():
 def dashboard():
     # group trades by token
     grouptrades = trades_collection.aggregate([
-        {
-            "$group": {
-                "_id": "$Token",
-                "netQuantity": {
-                    "$sum": {
-                        "$cond": [
-                            {"$eq": ["$Transaction", "BUY"]},
-                            "$Quantity",
-                            {"$multiply": ["$Quantity", -1]}
-                        ]
+    {
+        "$group": {
+            "_id": "$Token",
+            "netQuantity": {
+                "$sum": {
+                    "$cond": {
+                        "if": {"$eq": ["$Transaction", "BUY"]},
+                        "then": "$Quantity",
+                        "else": {
+                            "$cond": {
+                                "if": {"$eq": ["$Transaction", "SELL"]},
+                                "then": {"$multiply": ["$Quantity", -1]},
+                                "else": 0
+                            }
+                        }
                     }
+                 }
                 }
             }
         }
     ])
 
     grouptrades_list = list(grouptrades)
-
+    # grouptrades_list = list(grouptrades_debug)
     print("grouptrades: ", grouptrades_list)
 
     print("trades: ", trades)
@@ -194,6 +197,24 @@ def taxes():
         {
             "$group": {
                 "_id": "$Token",
+                "costBasis": {
+                    "$sum": {
+                        "$cond": [
+                            {"$eq": ["$Transaction", "BUY"]},
+                            {"$multiply": ["$Quantity", "$Price"]},
+                            0
+                        ]
+                    }
+                },
+                "proceeds": {
+                    "$sum": {
+                        "$cond": [
+                            {"$eq": ["$Transaction", "SELL"]},
+                            {"$multiply": ["$Quantity", "$Price"]},
+                            0
+                        ]
+                    }
+                },
                 "profit": {
                     "$sum": {
                         "$cond": [
@@ -209,13 +230,67 @@ def taxes():
     grouptrades_list = list(grouptrades)
     for trade in grouptrades_list:
         trade['profit'] = "{:,.2f}".format(trade['profit'])
+        trade['costBasis'] = "{:,.2f}".format(trade['costBasis'])
+        trade['proceeds'] = "{:,.2f}".format(trade['proceeds'])
     print("grouptrades: ", grouptrades_list)
+
     return render_template('taxes.html', section="Taxes", grouptrades=grouptrades_list)
 
 @app.route('/insights')
 @login_required
 def insights():
-    return render_template('insights.html', section="Insights")
+
+    grouptrades = trades_collection.aggregate([
+        {
+            "$group": {
+                "_id": "$Token",
+                "profit": {
+                    "$sum": {
+                        "$cond": [
+                            {"$eq": ["$Transaction", "SELL"]},
+                            {"$multiply": ["$Quantity", "$Price"]},
+                            {"$multiply": ["$Quantity", -1, "$Price"]}
+                        ]
+                    }
+                },
+                "totalPurchaseValue": {
+                    "$sum": {
+                        "$cond": [
+                            {"$eq": ["$Transaction", "BUY"]},
+                            {"$multiply": ["$Quantity", "$Price"]},
+                            0
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "$addFields": {
+                "relativeProfit": {
+                    "$cond": [
+                        {"$eq": ["$totalPurchaseValue", 0]},
+                        0,
+                        {"$multiply": [{"$divide": ["$profit", "$totalPurchaseValue"]}, 100]}
+                    ]
+                }
+            }
+        }
+    ])
+    
+    grouptrades_list = list(grouptrades)
+    total_pl = sum(trade['profit'] for trade in grouptrades_list)
+    for trade in grouptrades_list:
+        trade['profit'] = "{:,.2f}".format(trade['profit'])
+        trade['relativeProfit'] = "{:,.2f}".format(trade['relativeProfit'])
+    print("grouptrades: ", grouptrades_list)
+    total_pl = "{:,.2f}".format(total_pl)
+
+    worst_performers = sorted(grouptrades_list, key=lambda x: float(x['relativeProfit']))[:3]
+    best_performers = sorted(grouptrades_list, key=lambda x: float(x['relativeProfit']), reverse=True)[:3]
+
+    return render_template(
+        'insights.html', section="Insights", grouptrades=grouptrades_list, total_pl=total_pl,
+        worst_performers=worst_performers, best_performers=best_performers)
 
 @app.route('/edit', methods=['GET', 'POST'])
 @login_required
