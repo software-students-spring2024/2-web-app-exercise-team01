@@ -3,7 +3,7 @@
 <style>
     .centered-text {
         position: relative;
-        top: 20%; /* Adjusts the vertical position */
+        top: 20%;
         text-align: center;
         width: 100%;
     }
@@ -11,5 +11,11 @@
 
 <div class="centered-text">
     <h1>Edit individual values of your database here</h1>
+    <form action="{{ url_for('edit') }}" method="post">
+        <input type="number" name="visible_id" placeholder="Visible ID" required>
+        <input type="text" name="field" placeholder="Field to Edit" required>
+        <input type="text" name="new_value" placeholder="New Value" required>
+        <input type="submit" value="Edit Record">
+    </form>
 </div>
 {% endblock content %}
