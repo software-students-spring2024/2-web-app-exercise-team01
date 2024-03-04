@@ -3,14 +3,12 @@
 {% block content %}
 <div id="dashboardSection">
     <div id="graphContainer">
-        <p>Graph image placeholder</p>
-        <!-- Placeholder for graph image. Replace with actual image or graph drawing logic -->
+        <canvas id="dashboardChart"></canvas>
     </div>
     <div id="dashboardinfo" class="flex flex-row">
         <div class="infoSection">
             <h4>Current Positions &gt;</h4>
             <div class="infoContent">
-                <!-- Placeholder for portfolio details. Replace with actual content -->
                 <table id="portfolioTable">
                     <tr>
                         <th>Symbol</th>
@@ -33,4 +31,28 @@
         </div>
     </div>
 </div>
+<script>
+    const ctx = document.getElementById('dashboardChart');
+    console.log("p/l", {{ pandls|safe }})
+
+
+    new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: {{ labels|safe }},
+        datasets: [{
+            label: 'Profit/Loss',
+            data: {{ pandls|safe }},
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+    });
+</script>
 {% endblock content %}

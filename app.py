@@ -158,6 +158,15 @@ def dashboard():
                             {"$multiply": ["$Quantity", -1]}
                         ]
                     }
+                },
+                "profit": {
+                    "$sum": {
+                        "$cond": [
+                            {"$eq": ["$Transaction", "SELL"]},
+                            {"$multiply": ["$Quantity", "$Price"]},
+                            {"$multiply": ["$Quantity", -1, "$Price"]}
+                        ]
+                    }
                 }
             }
         }
@@ -167,8 +176,13 @@ def dashboard():
 
     print("grouptrades: ", grouptrades_list)
 
-    print("trades: ", trades)
-    return render_template('dashboard.html', section="Dashboard", grouptrades=grouptrades_list)
+    # labels will just be the distinct tokens 
+    labels = [trade['_id'] for trade in grouptrades_list]
+
+    # pandls will be just profit/loss of each token
+    pandls = [trade['profit'] for trade in grouptrades_list]
+    
+    return render_template('dashboard.html', section="Dashboard", grouptrades=grouptrades_list, labels=labels, pandls=pandls)
 
 @app.route('/taxes')
 @login_required
@@ -186,6 +200,24 @@ def taxes():
                             {"$multiply": ["$Quantity", -1, "$Price"]}
                         ]
                     }
+                },
+                "totalSpent": {
+                    "$sum": {
+                        "$cond": [
+                            {"$eq": ["$Transaction", "BUY"]},
+                            {"$multiply": ["$Quantity", "$Price"]},
+                            0
+                        ]
+                    }
+                },
+                "totalProceeds": {
+                    "$sum": {
+                        "$cond": [
+                            {"$eq": ["$Transaction", "SELL"]},
+                            {"$multiply": ["$Quantity", "$Price"]},
+                            0
+                        ]
+                    }
                 }
             }
         }
@@ -193,7 +225,10 @@ def taxes():
     grouptrades_list = list(grouptrades)
     for trade in grouptrades_list:
         trade['profit'] = "{:,.2f}".format(trade['profit'])
+        trade['totalSpent'] = "{:,.2f}".format(trade['totalSpent'])
+        trade['totalProceeds'] = "{:,.2f}".format(trade['totalProceeds'])
     print("grouptrades: ", grouptrades_list)
+
     return render_template('taxes.html', section="Taxes", grouptrades=grouptrades_list)
 
 @app.route('/insights')

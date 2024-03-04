@@ -86,7 +86,11 @@ header {
 #profitLoss {
     margin-bottom: 20px;
 }
-
+#graphContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 #graphContainer, .infoContent {
     background-color: #ddd;
     padding: 20px;
