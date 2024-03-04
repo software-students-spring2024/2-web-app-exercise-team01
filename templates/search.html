@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 {% block content %}
 <div style="text-align: center;">
-    <h2>Search Database</h2>
+    <h2>Search Database By Token</h2>
     <form action="{{ url_for('search_results') }}" method="post">
         <input type="text" name="search_query" required>
         <input type="submit" value="Search">
