@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crypto Pal</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </head>
 <body>
@@ -23,6 +24,26 @@
             </ul>
             
         </nav>
+        <div>
+            <h1>crypto pal</h1>
+            <nav>
+                {% set active_page = request.path %}
+                {% if current_user.is_authenticated %}
+                <ul id="navList">
+                    <li data-target="upload" class="{{ 'active' if active_page == '/upload' else '' }}"><a href="/upload">Upload</a></li>
+                    <li data-target="dashboard" class="{{ 'active' if active_page == '/dashboard' else '' }}"><a href="/dashboard">Dashboard</a></li>
+                    <li data-target="taxes" class="{{ 'active' if active_page == '/taxes' else '' }}"><a href="/taxes">Taxes</a></li>
+                    <li data-target="insights" class="{{ 'active' if active_page == '/insights' else '' }}"><a href="/insights">Insights</a></li>
+                </ul>
+                {% endif %}
+            </nav>
+        </div>
+        <!-- logout button -->
+        {% if current_user.is_authenticated %}
+        <form method="post" action="/logout">
+            <button id="logoutButton" type="submit" class="text-lg">Logout</button>
+        </form>
+        {% endif %}
     </aside>
     
     <section id="content">
