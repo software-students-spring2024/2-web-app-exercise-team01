@@ -1,0 +1,21 @@
+<!-- templates/search_results.html -->
+{% extends 'index.html' %}
+
+{% block content %}
+<div style="text-align: center;">
+    <h2>Search Results</h2>
+    {% if results %}
+        <ul>
+        {% for result in results %}
+            <li>
+                {% for key, value in result.items() %}
+                    <strong>{{ key }}:</strong> {{ value }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+</div>
+{% endblock content %}
