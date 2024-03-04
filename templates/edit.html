@@ -1,0 +1,80 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Trades</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>Edit Trade Data</h2>
+    <br><br>
+    <form id="editForm" action="/submitEdits" method="post">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Token</th>
+                    <th>Transaction</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Rows to be dynamically generated based on CSV content -->
+            </tbody>
+        </table>
+        <input type="submit" value="Submit Edits">
+    </form>
+
+    <script>
+        document.getElementById('csvFileInput').addEventListener('change', function (event) {
+            var file = event.target.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var text = e.target.result;
+                var data = Papa.parse(text, { header: true }).data; // Using PapaParse to parse CSV data
+
+                var tableBody = document.getElementById('tableBody');
+                tableBody.innerHTML = ''; // Clear existing rows
+
+                data.forEach(function (row) {
+                    var tr = document.createElement('tr');
+                    Object.keys(row).forEach(function (key) {
+                        var td = document.createElement('td');
+                        var input = document.createElement('input');
+                        input.value = row[key];
+                        input.name = key + '[]'; // Set name for server-side processing
+                        td.appendChild(input);
+                        tr.appendChild(td);
+                    });
+                    tableBody.appendChild(tr);
+                });
+            };
+
+            reader.readAsText(file);
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script> <!-- PapaParse library -->
+</body>
+</html>
+
+{% endblock content %}

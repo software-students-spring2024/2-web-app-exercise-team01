@@ -1,3 +1,18 @@
+
+{% extends 'index.html' %}
+
+{% block content %}
+<header>
+    <h2>Login</h2>
+</header>
+<form id="logindiv" class="flex flex-col items-center justify-start" method="post" action="/login">
+    <input type="text" id="username" placeholder="Username" name="username">
+    <input type="password" id="password" placeholder="Password" name="password">
+    <button id="loginButton" type="submit">Login</button>
+    <a href="/signup" class="underline text-[dimgray]">
+        Don't have an account? Sign up here.
+    </a>
+</form>
 {% extends 'index.html' %}
 
 {% block content %}
