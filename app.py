@@ -14,6 +14,7 @@ from flask import flash
 
 
 
+
 load_dotenv()
 
 DB_USER = os.getenv("DB_USER")
@@ -166,10 +167,37 @@ def taxes():
 def insights():
     return render_template('insights.html', section="Insights")
 
-@app.route('/edit')
+@app.route('/edit', methods=['GET', 'POST'])
 @login_required
 def edit():
+    if request.method == 'POST':
+        visible_id = request.form.get('visible_id')
+        field = request.form.get('field')
+        new_value = request.form.get('new_value')
+
+        try:
+            visible_id = int(visible_id)  # Convert visible_id to int
+            
+            # Update operation here; adjust the field's data type conversion as necessary
+            update_result = trades_collection.update_one(
+                {"visible_id": visible_id},
+                {"$set": {field: new_value}}
+            )
+            
+            if update_result.modified_count > 0:
+                flash('Record updated successfully.', 'success')
+            else:
+                flash('No record found with the given Visible ID, or no change needed.', 'info')
+        except ValueError:
+            flash('Invalid Visible ID format. Please enter a valid number.', 'error')
+        except Exception as e:
+            flash(f'An error occurred: {str(e)}', 'error')
+
+        return redirect(url_for('edit'))
+    
+    # GET request to show the form
     return render_template('edit.html')
+
 
 
 
