@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<header>
+    <h2>Sign Up</h2>
+</header>
+<form id="signupdiv" class="flex flex-col items-center justify-start" method="post" action="/signup">
+    <input type="text" id="username" placeholder="Username" name="username">
+    <input type="password" id="password" placeholder="Password" name="password">
+    <button id="loginButton" type="submit">Sign Up</button>
+    <a href="/login" class="underline text-[dimgray]">
+        Already have an account? Log in here.
+    </a>
+</form>
+{% endblock content %}
