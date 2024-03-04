@@ -8,6 +8,10 @@ import os
 from dotenv import load_dotenv
 import pandas as pd
 from werkzeug.utils import secure_filename
+from flask import flash
+
+
+
 
 
 load_dotenv()
@@ -119,7 +123,18 @@ def upload_file():
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
+            
+            # Read the CSV into a DataFrame
             df = pd.read_csv(filepath)
+            
+            # Add the 'visible_id' column
+            df['visible_id'] = range(1, len(df) + 1)
+            
+            # Reorder columns to make 'visible_id' the first column
+            cols = ['visible_id'] + [col for col in df.columns if col != 'visible_id']
+            df = df[cols]
+
+            print(df)
             
             # Convert DataFrame to dictionary for MongoDB
             records = df.to_dict(orient='records')
@@ -156,10 +171,7 @@ def insights():
 def edit():
     return render_template('edit.html')
 
-@app.route('/delete')
-@login_required
-def delete():
-    return render_template('delete.html')
+
 
 @app.route('/search')
 def search():
@@ -181,7 +193,42 @@ def search_results():
     
     return render_template('search_results.html', results=results)
 
+@app.route('/delete', methods=['GET', 'POST'])
+@login_required
+def delete():
+    if request.method == 'POST':
+        action = request.form.get('action')
+        
+        if action == "Delete Document":
+            visible_id_str = request.form.get('visible_id')
+            try:
+                visible_id = int(visible_id_str)
+                result = trades_collection.delete_one({"visible_id": visible_id})
+                if result.deleted_count > 0:
+                    flash('Document deleted successfully.', 'success')
+                else:
+                    flash('No document found with the given Visible ID.', 'warning')
+            except ValueError:
+                flash('Invalid Visible ID format. Please enter a valid number.', 'error')
+            except Exception as e:
+                flash(f'Error deleting document: {str(e)}', 'error')
+        
+        elif action == "Delete All":
+            trades_collection.delete_many({})
+            flash('All documents deleted successfully.', 'success')
+        
+        return redirect('/delete')
+    
+    return render_template('delete.html')
 
+
+
+@app.route('/view_db')
+def view_db():
+    # Fetch all documents from the collection
+    documents = list(trades_collection.find())
+    # Render a template, passing in the documents
+    return render_template('view_db.html', documents=documents)
 
 
 if __name__ == '__main__':
