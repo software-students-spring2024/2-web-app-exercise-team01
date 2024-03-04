@@ -19,10 +19,12 @@
                 <li data-target="insights" class="{{ 'active' if active_page == '/insights' else '' }}"><a href="/insights">Insights</a></li>
                 <li data-target="edit" class="{{ 'active' if active_page == '/edit' else '' }}"><a href="/edit">Edit</a></li>
                 <li data-target="delete" class="{{ 'active' if active_page == '/delete' else '' }}"><a href="/delete">Delete</a></li>
+                <li data-target="search" class="{{ 'active' if active_page == '/search' else '' }}"><a href="/search">Search</a></li>
             </ul>
+            
         </nav>
     </aside>
-
+    
     <section id="content">
         <header>
             <div>
@@ -39,13 +41,13 @@
                     <div class="dot"></div>
                 </div>
             </div>
-
+                
 
         </header>
         {% block content %}
         {% endblock content %}
     </section>
-
+    
 </body>
 </html>
 

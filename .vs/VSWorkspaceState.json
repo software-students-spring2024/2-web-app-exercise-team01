@@ -1,13 +1,6 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\.github",
-    "\\.github\\workflows",
-    "\\images",
-    "\\static",
-    "\\static\\css",
-    "\\static\\js",
-    "\\templates"
+    ""
   ],
   "SelectedNode": "\\auth.py",
   "PreviewInSolutionExplorer": false
