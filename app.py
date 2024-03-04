@@ -161,6 +161,29 @@ def edit():
 def delete():
     return render_template('delete.html')
 
+@app.route('/search')
+def search():
+    return render_template('search.html')
+
+@app.route('/search_results', methods=['POST'])
+def search_results():
+    search_query = request.form['search_query']
+    results_cursor = trades_collection.find({"Token": {"$regex": search_query, "$options": "i"}})
+    # Convert cursor to list and remove the first field from each document
+    results = []
+    for doc in results_cursor:
+        doc_dict = dict(doc)
+        if doc_dict:
+            # Remove the first key-value pair
+            first_key = list(doc_dict.keys())[0]
+            doc_dict.pop(first_key)
+        results.append(doc_dict)
+    
+    return render_template('search_results.html', results=results)
+
+
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=3000)
 
