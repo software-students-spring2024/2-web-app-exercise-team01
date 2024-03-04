@@ -5,15 +5,27 @@
 <div style="text-align: center;">
     <h2>Search Results</h2>
     {% if results %}
-        <ul>
-        {% for result in results %}
-            <li>
-                {% for key, value in result.items() %}
-                    <strong>{{ key }}:</strong> {{ value }}{% if not loop.last %}, {% endif %}
+        <table border="1" style="margin-left: auto; margin-right: auto;">
+            <thead>
+                <tr>
+                    {% if results %}
+                        <!-- Dynamically creating table headers based on the first result keys -->
+                        {% for key in results[0].keys() %}
+                            <th>{{ key }}</th>
+                        {% endfor %}
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        {% for value in result.values() %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
                 {% endfor %}
-            </li>
-        {% endfor %}
-        </ul>
+            </tbody>
+        </table>
     {% else %}
         <p>No results found.</p>
     {% endif %}

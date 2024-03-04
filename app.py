@@ -336,19 +336,34 @@ def edit():
 
         try:
             visible_id = int(visible_id)  # Convert visible_id to int
-            
-            # Update operation here; adjust the field's data type conversion as necessary
-            update_result = trades_collection.update_one(
-                {"visible_id": visible_id},
-                {"$set": {field: new_value}}
-            )
-            
-            if update_result.modified_count > 0:
-                flash('Record updated successfully.', 'success')
+            # Fetch the document to be edited
+            document = trades_collection.find_one({"visible_id": visible_id})
+            if document:
+                # Determine the data type of the field being edited
+                original_value = document.get(field)
+                if original_value is not None:
+                    # Convert new_value to the same data type as original_value
+                    if isinstance(original_value, int):
+                        new_value_converted = int(new_value)
+                    elif isinstance(original_value, float):
+                        new_value_converted = float(new_value)
+                    else:
+                        new_value_converted = new_value  # Keep as string for other types
+                    # Update operation with converted value
+                    update_result = trades_collection.update_one(
+                        {"visible_id": visible_id},
+                        {"$set": {field: new_value_converted}}
+                    )
+                    if update_result.modified_count > 0:
+                        flash('Record updated successfully.', 'success')
+                    else:
+                        flash('No record found with the given Visible ID, or no change needed.', 'info')
+                else:
+                    flash(f'Field {field} not found in the document.', 'error')
             else:
-                flash('No record found with the given Visible ID, or no change needed.', 'info')
-        except ValueError:
-            flash('Invalid Visible ID format. Please enter a valid number.', 'error')
+                flash('No document found with the given Visible ID.', 'error')
+        except ValueError as ve:
+            flash(f'Invalid input format: {str(ve)}', 'error')
         except Exception as e:
             flash(f'An error occurred: {str(e)}', 'error')
 
@@ -356,6 +371,7 @@ def edit():
     
     # GET request to show the form
     return render_template('edit.html')
+
 
 
 
