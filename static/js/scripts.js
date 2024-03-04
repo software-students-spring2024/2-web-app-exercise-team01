@@ -34,4 +34,5 @@ document.addEventListener('DOMContentLoaded', () => {
             li.classList.remove('active');
         });
         document.querySelector(`#navList li[data-target="${targetId}"]`).classList.add('active');
-    }})
+    }
+})

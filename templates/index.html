@@ -39,6 +39,7 @@
     </aside>
     
     <section id="content">
+        {% if current_user.is_authenticated %}
         <header>
             <div>
                 <h2 style="margin: 0;">{{section}}</h2>
@@ -54,9 +55,8 @@
                     <div class="dot"></div>
                 </div>
             </div>
-                
-
         </header>
+        {% endif %}
         {% block content %}
         {% endblock content %}
     </section>
