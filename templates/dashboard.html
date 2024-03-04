@@ -33,26 +33,26 @@
 </div>
 <script>
     const ctx = document.getElementById('dashboardChart');
-    console.log("p/l", {{ pandls|safe }})
+    console.log("p/l", JSON.parse('{{ pandls|tojson|safe }}'));
 
 
     new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: {{ labels|safe }},
-        datasets: [{
-            label: 'Profit/Loss',
-            data: {{ pandls|safe }},
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
+        type: 'bar',
+        data: {
+            labels: JSON.parse('{{ labels|tojson|safe }}'),
+            datasets: [{
+                label: 'Profit/Loss',
+                data: JSON.parse('{{ pandls|tojson|safe }}'),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
             }
         }
-    }
     });
 </script>
 {% endblock content %}

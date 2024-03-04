@@ -177,12 +177,21 @@ def dashboard():
                         }
                     }
                  }
+                },
+                "profit": {
+                    "$sum": {
+                        "$cond": [
+                            {"$eq": ["$Transaction", "SELL"]},
+                            {"$multiply": ["$Quantity", "$Price"]},
+                            {"$multiply": ["$Quantity", -1, "$Price"]}
+                        ]
+                    }
                 }
             }
         }
     ])
-
     grouptrades_list = list(grouptrades)
+
     # grouptrades_list = list(grouptrades_debug)
     print("grouptrades: ", grouptrades_list)
 
@@ -192,7 +201,9 @@ def dashboard():
     # pandls will be just profit/loss of each token
     pandls = [trade['profit'] for trade in grouptrades_list]
     
-    return render_template('dashboard.html', section="Dashboard", grouptrades=grouptrades_list, labels=labels, pandls=pandls)
+    return render_template(
+        'dashboard.html', section="Dashboard", grouptrades=grouptrades_list, labels=labels, pandls=pandls
+    )
 
 @app.route('/taxes')
 @login_required

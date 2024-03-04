@@ -58,43 +58,6 @@
                 </table>
             </div>
         </div>
-<<<<<<< HEAD
-=======
-        <div class="infoSection">
-            <h4>Cost basis per token</h4>
-            <div class="infoContent">
-                <table id="taxesTable">
-                    <tr>
-                        <th>Token</th>
-                        <th>Cost Basis</th>
-                    </tr>
-                    {% for trade in grouptrades %}
-                    <tr>
-                        <td>{{ trade._id }}</td>
-                        <td>${{ trade.totalSpent }}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </div>
-        </div>
-        <div class="infoSection">
-            <h4>Proceeds per token</h4>
-            <div class="infoContent">
-                <table id="taxesTable">
-                    <tr>
-                        <th>Token</th>
-                        <th>Proceeds</th>
-                    </tr>
-                    {% for trade in grouptrades %}
-                    <tr>
-                        <td>{{ trade._id }}</td>
-                        <td>${{ trade.totalProceeds }}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </div>
-        </div>
->>>>>>> upstream/main
     </div>
 </div>
 {% endblock content %}
